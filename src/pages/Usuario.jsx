@@ -1,6 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Usuarios() {
+  const navigate = useNavigate();
+  const [usuarioLogado, setUsuarioLogado] = useState(null);
+
+  useEffect(() => {
+    const usuario = localStorage.getItem('usuarioLogado');
+    if (usuario) {
+      const usuarioParsed = JSON.parse(usuario);
+      setUsuarioLogado(usuarioParsed);
+      
+      // Se for Aluno, redirecionar para Reservas
+      if (usuarioParsed.tipoUsuario === 'Aluno') {
+        navigate('/reservas');
+      }
+    }
+  }, [navigate]);
   const [usuarios, setUsuarios] = useState([
     { id: 1, nome: 'João Silva', email: 'joao@gmail.com', telefone: '(11) 99999-0001', cargo: 'Professor' },
     { id: 2, nome: 'Maria Santos', email: 'maria@hotmail.com', telefone: '(11) 99999-0002', cargo: 'Administrador' },

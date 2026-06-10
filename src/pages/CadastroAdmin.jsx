@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-export default function CadastroAluno() {
+export default function CadastroAdmin() {
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
     senha: '',
     confirmarSenha: '',
     telefone: '',
-    matricula: '',
-    curso: 'Engenharia de Software',
+    departamento: 'Administrativo',
+    nivelAcesso: 'Editor',
+    chaveAdministrador: '',
   });
 
   const [erros, setErros] = useState({});
@@ -17,6 +18,9 @@ export default function CadastroAluno() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [cadastroSucesso, setCadastroSucesso] = useState(false);
   const navigate = useNavigate();
+
+  // Chave de administrador (para validação)
+  const CHAVE_ADMIN_VALIDA = 'ADMIN2024SISRESERVA';
 
   const validarFormulario = () => {
     const novosErros = {};
@@ -47,8 +51,10 @@ export default function CadastroAluno() {
       novosErros.telefone = 'Formato: (XX) XXXXX-XXXX';
     }
 
-    if (!formData.matricula.trim()) {
-      novosErros.matricula = 'Matrícula é obrigatória';
+    if (!formData.chaveAdministrador.trim()) {
+      novosErros.chaveAdministrador = 'Chave de administrador é obrigatória';
+    } else if (formData.chaveAdministrador !== CHAVE_ADMIN_VALIDA) {
+      novosErros.chaveAdministrador = 'Chave de administrador inválida';
     }
 
     setErros(novosErros);
@@ -93,8 +99,8 @@ export default function CadastroAluno() {
       return;
     }
 
-    // Simular registro de aluno
-    console.log('Aluno cadastrado:', formData);
+    // Simular registro de admin
+    console.log('Admin cadastrado:', formData);
     setCadastroSucesso(true);
 
     // Redirecionar para login após 2 segundos
@@ -113,7 +119,7 @@ export default function CadastroAluno() {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-green-600 mb-2">Cadastro Realizado!</h2>
-          <p className="text-gray-600 mb-4">Sua conta foi criada com sucesso. Redirecionando para login...</p>
+          <p className="text-gray-600 mb-4">Sua conta de administrador foi criada com sucesso. Redirecionando para login...</p>
           <Link
             to="/"
             className="inline-block bg-[#4E73DF] hover:bg-[#3b59b6] text-white font-semibold py-2 px-6 rounded-lg transition"
@@ -131,8 +137,8 @@ export default function CadastroAluno() {
         
         {/* Cabeçalho */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">Cadastro de Aluno</h2>
-          <p className="text-gray-500 mt-2">Crie sua conta para acessar o sistema</p>
+          <h2 className="text-3xl font-bold text-gray-800">Cadastro de Administrador</h2>
+          <p className="text-gray-500 mt-2">Crie sua conta de administrador do sistema</p>
         </div>
 
         {/* Formulário */}
@@ -167,30 +173,12 @@ export default function CadastroAluno() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder="joao@unifan.edu.br"
+                placeholder="admin@unifan.edu.br"
                 className={`w-full px-4 py-2 border rounded-lg outline-none transition ${
                   erros.email ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-[#4E73DF] focus:border-[#4E73DF]'
                 }`}
               />
               {erros.email && <p className="text-red-500 text-sm mt-1">{erros.email}</p>}
-            </div>
-
-            {/* Matrícula */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Matrícula
-              </label>
-              <input
-                type="text"
-                name="matricula"
-                value={formData.matricula}
-                onChange={handleInputChange}
-                placeholder="2024001"
-                className={`w-full px-4 py-2 border rounded-lg outline-none transition ${
-                  erros.matricula ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-[#4E73DF] focus:border-[#4E73DF]'
-                }`}
-              />
-              {erros.matricula && <p className="text-red-500 text-sm mt-1">{erros.matricula}</p>}
             </div>
 
             {/* Telefone */}
@@ -211,22 +199,40 @@ export default function CadastroAluno() {
               {erros.telefone && <p className="text-red-500 text-sm mt-1">{erros.telefone}</p>}
             </div>
 
-            {/* Curso */}
+            {/* Departamento */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Curso
+                Departamento
               </label>
               <select
-                name="curso"
-                value={formData.curso}
+                name="departamento"
+                value={formData.departamento}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#4E73DF] focus:border-[#4E73DF] transition text-gray-800"
               >
-                <option value="Engenharia de Software">Engenharia de Software</option>
-                <option value="Engenharia Civil">Engenharia Civil</option>
-                <option value="Administração">Administração</option>
-                <option value="Contabilidade">Contabilidade</option>
-                <option value="Direito">Direito</option>
+                <option value="Administrativo">Administrativo</option>
+                <option value="TI">TI (Tecnologia da Informação)</option>
+                <option value="Recursos Humanos">Recursos Humanos</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Acadêmico">Acadêmico</option>
+              </select>
+            </div>
+
+            {/* Nível de Acesso */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nível de Acesso
+              </label>
+              <select
+                name="nivelAcesso"
+                value={formData.nivelAcesso}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#4E73DF] focus:border-[#4E73DF] transition text-gray-800"
+              >
+                <option value="Visualizador">Visualizador</option>
+                <option value="Editor">Editor</option>
+                <option value="Administrador">Administrador</option>
+                <option value="SuperAdmin">Super Administrador</option>
               </select>
             </div>
 
@@ -283,6 +289,25 @@ export default function CadastroAluno() {
               </div>
               {erros.confirmarSenha && <p className="text-red-500 text-sm mt-1">{erros.confirmarSenha}</p>}
             </div>
+
+            {/* Chave de Administrador */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Chave de Administrador *
+              </label>
+              <input
+                type="password"
+                name="chaveAdministrador"
+                value={formData.chaveAdministrador}
+                onChange={handleInputChange}
+                placeholder="Digite a chave de administrador"
+                className={`w-full px-4 py-2 border rounded-lg outline-none transition ${
+                  erros.chaveAdministrador ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-[#4E73DF] focus:border-[#4E73DF]'
+                }`}
+              />
+              {erros.chaveAdministrador && <p className="text-red-500 text-sm mt-1">{erros.chaveAdministrador}</p>}
+              <p className="text-xs text-gray-500 mt-1">Chave de segurança necessária para criar conta de admin</p>
+            </div>
           </div>
 
           {/* Botões */}
@@ -294,28 +319,26 @@ export default function CadastroAluno() {
               Cadastrar
             </button>
             <Link
-              to="/escolha-cadastro"
+              to="/"
               className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg transition shadow-sm text-center"
             >
-              Voltar
+              Cancelar
             </Link>
           </div>
 
-          {/* Link para Cadastro de Admin */}
+          {/* Link para Cadastro de Aluno */}
           <p className="text-center text-gray-600 text-sm mt-4">
-            Deseja se cadastrar como administrador?{' '}
-            <Link to="/cadastro-admin" className="text-[#4E73DF] hover:underline font-semibold">
+            Deseja se cadastrar como aluno?{' '}
+            <Link to="/cadastro-aluno" className="text-[#4E73DF] hover:underline font-semibold">
               Clique aqui
             </Link>
           </p>
 
-          {/* Link para Login */}
-          <p className="text-center text-gray-600 text-sm mt-2">
-            Já tem conta?{' '}
-            <Link to="/" className="text-[#4E73DF] hover:underline font-semibold">
-              Faça login aqui
-            </Link>
-          </p>
+          {/* Info da Chave */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800 mt-4">
+            <p className="font-semibold mb-1">🔑 Chave de Administrador (Teste):</p>
+            <p className="font-mono break-all">{CHAVE_ADMIN_VALIDA}</p>
+          </div>
         </form>
       </div>
     </div>

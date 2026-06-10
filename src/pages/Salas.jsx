@@ -1,6 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Salas() {
+  const navigate = useNavigate();
+  const [usuarioLogado, setUsuarioLogado] = useState(null);
+
+  useEffect(() => {
+    const usuario = localStorage.getItem('usuarioLogado');
+    if (usuario) {
+      const usuarioParsed = JSON.parse(usuario);
+      setUsuarioLogado(usuarioParsed);
+      
+      // Se for Aluno, redirecionar para Reservas
+      if (usuarioParsed.tipoUsuario === 'Aluno') {
+        navigate('/reservas');
+      }
+    }
+  }, [navigate]);
   // Gerar salas automaticamente baseado na estrutura solicitada
   const gerarSalas = () => {
     const salas = [];
@@ -313,7 +329,7 @@ export default function Salas() {
         {blocos.map(bloco => (
           <div key={bloco.codigo} className="border border-gray-200 rounded-lg overflow-hidden">
             {/* Cabeçalho do Bloco */}
-            <div className="bg-gradient-to-r from-[#4E73DF] to-[#3b59b6] text-white px-6 py-4">
+            <div className="bg-linear-to-r from-[#4E73DF] to-[#3b59b6] text-white px-6 py-4">
               <h4 className="text-lg font-bold">
                 Bloco {bloco.codigo} - {bloco.nome}
               </h4>

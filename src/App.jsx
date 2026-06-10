@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from './pages/Login';
 import CadastroAluno from './pages/Cadastro';
+import CadastroAdmin from './pages/CadastroAdmin';
+import CadastroEscolha from './pages/CadastroEscolha';
 import Usuarios from './pages/Usuario';
 import Salas from './pages/Salas';
 import Reservas from './pages/Reservas';
@@ -122,11 +124,13 @@ function App() {
         </nav>
 
         {/* Conteúdo Principal */}
-        <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 min-h-[calc(100vh-11rem)]">
             <Routes>
               <Route path="/" element={<Login setEstaLogado={setEstaLogado} />} />
+              <Route path="/escolha-cadastro" element={<CadastroEscolha />} />
               <Route path="/cadastro-aluno" element={<CadastroAluno />} />
+              <Route path="/cadastro-admin" element={<CadastroAdmin />} />
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/salas" element={<Salas />} />
               <Route path="/reservas" element={<Reservas />} />
